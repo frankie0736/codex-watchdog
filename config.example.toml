@@ -1,0 +1,25 @@
+# 示例配置。复制到 ~/.config/codex-watchdog/config.toml 后按需修改；
+# 文件不存在时使用下面这些默认值。未知字段会直接报错。
+
+poll_interval_seconds = 5
+capacity_error_grace_seconds = 30       # 错误出现后至少等这么久再处理
+capacity_error_max_age_seconds = 3600   # 超过这个时长的容量错误视为 STALE，不处理
+active_max_age_seconds = 21600          # inProgress turn 超过这个时长视为 ORPHANED
+global_max_sends_per_minute = 5
+per_thread_cooldown_seconds = 300
+queue_retry_seconds = 120               # codex queue 执行失败后的重试间隔
+delivery_timeout_seconds = 300          # 入队后这么久仍没有新 turn，才允许下一次尝试
+max_attempts_per_turn = 3               # 同一个失败 turn 最多尝试次数，之后 NEEDS_ATTENTION
+queue_timeout_seconds = 30
+startup_recover_recent_errors = true
+require_attached = true                 # 只给仍被 codex 进程加载的会话发送（lsof 检测 rollout 文件），已退出的显示 DETACHED
+dry_run = false                         # 默认真实发送；设为 true 或用 --dry-run 启动则只记录不发送
+message = "继续"
+codex_bin = "codex"
+allowed_sources = ["cli", "vscode"]     # ChatGPT App 的 Codex 会话 source 为 vscode；exec / subagent 默认排除
+auto_discover_homes = true              # 自动发现 ~/.codex* 下含 state_*.sqlite 的目录
+state_dir = "~/.local/state/codex-watchdog"
+
+# 显式追加 home（与自动发现结果合并去重）：
+# [[codex_home]]
+# path = "~/.codex-sub"
